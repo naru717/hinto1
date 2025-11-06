@@ -1,1 +1,171 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>とせいくんからひとこと①</title>
+
+<style>
+  :root{
+    --bg:#fff7fb; --card:#ffffff; --text:#1f2937; --muted:#6b7280;
+    --accent:#ff7ac6; --ok:#16a34a; --ng:#ef4444; --ring:#ffd5ec;
+  }
+  body{
+    margin:0; padding:0; background:linear-gradient(180deg,#fff7fb,#f5fbff);
+    font-family:-apple-system,"Hiragino Kaku Gothic ProN","Yu Gothic",Meiryo,sans-serif;
+    color:var(--text);
+  }
+  .wrap{max-width:760px; margin:0 auto; padding:26px 16px;}
+  .card{
+    background:var(--card); border:2px solid var(--ring);
+    border-radius:20px; padding:22px;
+    box-shadow:0 8px 20px rgba(255,122,198,.18);
+    animation:fade .35s ease;
+  }
+  @keyframes fade{from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:none}}
+  .hero{text-align:center;}
+  .hero img{width:min(60vw,260px);height:auto;border-radius:20px;box-shadow:0 6px 16px rgba(0,0,0,.1);}
+  .title{font-size:26px;font-weight:900;margin:0 0 10px;}
+  .btn{
+    padding:14px 26px;border-radius:18px;border:none;cursor:pointer;
+    background:linear-gradient(90deg,var(--accent),#ffa7d8);color:#fff;font-size:18px;
+    box-shadow:0 6px 16px rgba(255,122,198,.35);
+  }
+  .btn:active{transform:translateY(1px);}
+  .form-vertical{display:flex;flex-direction:column;gap:14px;margin-top:12px;}
+  input{
+    width:100%;padding:14px;border-radius:12px;border:2px solid #ffdff0;font-size:16px;
+  }
+  input:focus{border-color:#ffb3dc;box-shadow:0 0 0 3px #ffe6f4;}
+  .choices{display:grid;gap:10px;margin-top:14px;}
+  .choice-btn{
+    padding:14px;border-radius:14px;border:2px solid #e7f2ff;background:#fff;
+    text-align:left;font-size:16px;cursor:pointer;
+  }
+  .choice-btn:hover{background:#f7fbff;border-color:#cfe4ff;}
+  .result{margin-top:10px;font-size:20px;font-weight:900;}
+  .ok{color:var(--ok);} .ng{color:var(--ng);}
+  .end-msg{
+    background:#fffdf0;border:2px solid #ffe9b8;border-radius:18px;
+    padding:14px;margin-top:12px;line-height:1.9;text-align:center;
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <!-- ✅ 1ページ目 -->
+  <section id="page1" class="card">
+    <div class="hero">
+      <h1 class="title">とせいくんからひとこと①</h1>
+      <img src="mame2.png" alt="とせいくん" />
+      <div style="margin-top:14px;">
+        <button class="btn" onclick="go(2)">次へ</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ✅ 2ページ目 -->
+  <section id="page2" class="card" style="display:none;">
+    <div class="hero">
+      <h2 class="title">君のこと教えて</h2>
+      <img src="mame2.png" alt="とせいくん" style="width:140px;" />
+    </div>
+
+    <div class="form-vertical">
+      <div><input id="name" type="text" placeholder="名前" /></div>
+      <div><input id="group" type="text" placeholder="所属（例：外来／〇〇病棟）" /></div>
+      <div><input id="job" type="text" placeholder="職種（例：看護師／医師など）" /></div>
+    </div>
+
+    <div style="text-align:center;margin-top:14px;">
+      <button class="btn" onclick="go(3)">次へ</button>
+    </div>
+  </section>
+
+  <!-- ✅ 3ページ目：クイズ -->
+  <section id="page3" class="card" style="display:none;">
+    <div class="hero">
+      <h2 style="margin:4px 0 10px;">突然だけどクイズ出すね</h2>
+    </div>
+
+    <p style="text-align:center;margin-bottom:6px;">これってなんの医療用語を説明しているかわかる？</p>
+    <p style="text-align:center;font-weight:800;">病気や治療のせいで別の病気が起こること</p>
+
+    <div class="choices">
+      <button class="choice-btn" onclick="check(1)">1）原疾患</button>
+      <button class="choice-btn" onclick="check(2)">2）合併症</button>
+      <button class="choice-btn" onclick="check(3)">3）副病名</button>
+    </div>
+
+    <div id="judge" class="result"></div>
+  </section>
+
+  <!-- ✅ 4ページ目 -->
+  <section id="page4" class="card" style="display:none;">
+    <div class="hero">
+      <img src="mame2.png" alt="とせいくん" />
+      <div class="end-msg">
+        医療用語って知らない間に使っているんだよ。<br>
+        誰にでも分かりやすく説明するように<br>
+        練習しておくことも大切だよ。
+      </div>
+      <button class="btn" onclick="finish()">終了する</button>
+      <p id="finish-text" style="display:none;font-weight:900;margin-top:12px;">
+        ありがとうございました！
+      </p>
+    </div>
+  </section>
+
+</div>
+
+<!-- ✅ 効果音 -->
+<audio id="seClick" src="pochi.mp3" preload="auto"></audio>
+<audio id="seCorrect" src="pinpon.mp3" preload="auto"></audio>
+
+<script>
+function go(n){
+  playClick();
+  document.querySelectorAll("section").forEach(s=>s.style.display="none");
+  document.getElementById("page"+n).style.display="block";
+  window.scrollTo({top:0});
+}
+
+function check(num){
+  const judge = document.getElementById("judge");
+
+  if(num === 2){
+    judge.textContent = "正解！";
+    judge.className = "result ok";
+    playCorrect();
+    setTimeout(()=>go(4), 900);
+  }else{
+    judge.textContent = "よく考えてみて";
+    judge.className = "result ng";
+  }
+}
+
+function finish(){
+  playClick();
+  document.getElementById("finish-text").style.display = "block";
+}
+
+function playClick(){
+  try{
+    const se = document.getElementById("seClick");
+    se.currentTime = 0; se.play();
+  }catch(e){}
+}
+
+function playCorrect(){
+  try{
+    const se = document.getElementById("seCorrect");
+    se.currentTime = 0; se.play();
+  }catch(e){}
+}
+</script>
+
+</body>
+</html>
 
